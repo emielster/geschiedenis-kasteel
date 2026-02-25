@@ -1,0 +1,17 @@
+[
+  {
+    "text": "Wat is de hoofdstad van Nederland?",
+    "choices": ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht"],
+    "correct": 0
+  },
+  {
+    "text": "In welk jaar eindigde de Tweede Wereldoorlog?",
+    "choices": ["1942", "1945", "1939", "1950"],
+    "correct": 1
+  },
+  {
+    "text": "Wie schreef 'Romeo en Julia'?",
+    "choices": ["Charles Dickens", "William Shakespeare", "Homer", "J.R.R. Tolkien"],
+    "correct": 1
+  }
+]
