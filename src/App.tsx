@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { CastleBackground } from './Castle';
-import { SpinnerCircle, LoadingDots, ConnectionStatus, LoadingOverlay } from './LoadingSpinner';
+import { LoadingDots, ConnectionStatus, LoadingOverlay } from './LoadingSpinner';
 import './styles.css';
 
 const supabase = createClient(
