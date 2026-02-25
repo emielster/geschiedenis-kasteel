@@ -495,7 +495,7 @@ button::before {
   z-index: -1;
 }
 
-button:hover:not(:disabled) {
+button:hover:not(:disabled):not(.join-button) {
   border-color: var(--blue);
   color: var(--blue);
   background: var(--light-gray);
@@ -846,4 +846,516 @@ ul {
   .timer {
     font-size: 2rem;
   }
+}
+/* ═══════════════════════════════════════════════
+   LEADERBOARD — KAHOOT PILLAR STYLE
+═══════════════════════════════════════════════ */
+
+@keyframes crownSpin {
+  0%   { transform: rotate(-15deg) scale(1); }
+  25%  { transform: rotate(10deg) scale(1.15); }
+  50%  { transform: rotate(-8deg) scale(1.05); }
+  75%  { transform: rotate(6deg) scale(1.12); }
+  100% { transform: rotate(-15deg) scale(1); }
+}
+
+@keyframes winnerGlow {
+  0%, 100% { text-shadow: 0 0 8px rgba(255,215,0,0.4); }
+  50%       { text-shadow: 0 0 24px rgba(255,215,0,0.9), 0 0 48px rgba(255,165,0,0.5); }
+}
+
+@keyframes pillarWinnerPulse {
+  0%, 100% { filter: brightness(1); }
+  50%       { filter: brightness(1.25) saturate(1.3); }
+}
+
+@keyframes pointsPop {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0)   scale(0.5); }
+  40%  { opacity: 1; transform: translateX(-50%) translateY(-30px) scale(1.3); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(1); }
+}
+
+@keyframes nameDropIn {
+  0%   { opacity: 0; transform: translateY(-16px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0)     scale(1); }
+}
+
+/* Full-screen dark stage */
+.lb2-bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, #0f0c1a 0%, #1a1035 60%, #0d1526 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 40px;
+  z-index: 200;
+  overflow: hidden;
+}
+
+/* Subtle star-field feel */
+.lb2-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 10%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 55%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 80%, rgba(255,255,255,0.15) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.lb2-title {
+  position: absolute;
+  top: 36px;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+  animation: fadeIn 0.5s ease;
+}
+
+/* The horizontal stage that holds all pillars */
+.lb2-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 20px;
+  padding-bottom: 2px; /* sits on the floor */
+}
+
+/* Floor line */
+.lb2-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  border-radius: 99px;
+}
+
+/* Each player column: nametag + pillar stacked vertically */
+.lb2-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  max-width: 88px;
+}
+
+/* Name tag floating above pillar */
+.lb2-nametag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.lb2-medal {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.lb2-playername {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb2-pts {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+}
+
+/* The actual pillar bar */
+.lb2-pillar {
+  width: 100%;
+  min-height: 0px;
+  border-radius: 8px 8px 0 0;
+  will-change: height;
+}
+
+.lb2-pillar-winner {
+  animation: pillarWinnerPulse 1.4s ease-in-out infinite;
+}
+
+/* Winner spotlight text */
+.lb2-winner {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lb2-winner-crown {
+  font-size: 2.4rem;
+  animation: crownSpin 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+.lb2-winner-text {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #FFD700;
+  letter-spacing: -0.5px;
+  animation: winnerGlow 1.6s ease-in-out infinite;
+}
+
+.lb2-waiting {
+  margin-top: 24px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: pulse 2s infinite;
+}
+
+/* ═══════════════════════════════════════════════
+   POINTS POP ANIMATION
+═══════════════════════════════════════════════ */
+
+.points-pop {
+  position: absolute;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #10b981;
+  text-shadow: 0 2px 8px rgba(16,185,129,0.4);
+  pointer-events: none;
+  animation: pointsPop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  z-index: 10;
+  left: 50%;
+}
+
+/* ═══════════════════════════════════════════════
+   CINEMATIC QUESTION REVEAL
+═══════════════════════════════════════════════ */
+
+@keyframes castlePulse {
+  0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 0px rgba(255,215,0,0));    }
+  50%       { transform: scale(1.08); filter: drop-shadow(0 0 18px rgba(255,215,0,0.7)); }
+}
+
+@keyframes questionMarkBounce {
+  0%, 100% { transform: translateY(0)    scale(1);    opacity: 1;   }
+  30%       { transform: translateY(-12px) scale(1.2);  opacity: 1;   }
+  60%       { transform: translateY(-4px)  scale(0.95); opacity: 0.8; }
+}
+
+@keyframes cinematicReveal {
+  0%   { opacity: 0; transform: scale(0.88) translateY(16px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+@keyframes choiceUnlock {
+  0%   { opacity: 0; transform: translateY(10px) scale(0.93); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* The full-card cinematic cover */
+.cinematic-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px 24px;
+  gap: 4px;
+  min-height: 220px;
+}
+
+.cinematic-castle {
+  font-size: 5rem;
+  line-height: 1;
+  animation: castlePulse 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+}
+
+.cinematic-question-mark {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1;
+  letter-spacing: -2px;
+  animation: questionMarkBounce 0.9s ease-in-out infinite;
+  text-shadow: 0 2px 12px rgba(59,130,246,0.4);
+}
+
+.cinematic-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(31,41,55,0.45);
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Locked choices before they unlock */
+.choice-locked {
+  opacity: 0.38 !important;
+  filter: blur(2px);
+  pointer-events: none;
+  transform: none !important;
+}
+
+/* ═══════════════════════════════════════════════
+   MEDIEVAL SCENE BACKGROUND
+═══════════════════════════════════════════════ */
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50%       { opacity: 0.2; transform: scale(0.5); }
+}
+
+@keyframes cloudDrift {
+  0%   { transform: translateX(-60vw);  opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+
+@keyframes batFly {
+  0%   { transform: translateX(-80px) scaleX(1); }
+  49%  { transform: translateX(110vw) scaleX(1); }
+  50%  { transform: translateX(110vw) scaleX(-1); }
+  100% { transform: translateX(-80px) scaleX(-1); }
+}
+
+@keyframes batWing {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(0.5); }
+}
+
+@keyframes torchFlicker {
+  0%,100% { opacity: 1;   transform: scaleY(1)   scaleX(1)   translateY(0); }
+  25%      { opacity: 0.8; transform: scaleY(1.1) scaleX(0.9) translateY(-1px); }
+  50%      { opacity: 0.9; transform: scaleY(0.9) scaleX(1.1) translateY(1px); }
+  75%      { opacity: 1;   transform: scaleY(1.2) scaleX(0.8) translateY(-2px); }
+}
+
+@keyframes fogDrift {
+  0%   { transform: translateX(-30%) scaleY(1);   opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(110%)  scaleY(1.2); opacity: 0; }
+}
+
+@keyframes moonGlow {
+  0%, 100% { box-shadow: 0 0 40px 12px rgba(220,210,255,0.18), 0 0 80px 30px rgba(180,160,255,0.08); }
+  50%       { box-shadow: 0 0 60px 20px rgba(220,210,255,0.28), 0 0 120px 50px rgba(180,160,255,0.14); }
+}
+
+@keyframes castleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* Root container */
+.scene-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Sky */
+.scene-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #03020a 0%,
+    #0a0520 25%,
+    #130a2e 50%,
+    #1e1040 65%,
+    #2a1a3a 75%,
+    #1a1228 85%,
+    #0e0c1a 100%
+  );
+}
+
+/* Moon */
+.scene-moon {
+  position: absolute;
+  top: 6%;
+  right: 14%;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, #fffef0, #e8dfc0 40%, #c8b870 100%);
+  animation: moonGlow 4s ease-in-out infinite;
+  box-shadow:
+    0 0 40px 12px rgba(220,210,180,0.18),
+    0 0 80px 30px rgba(180,160,120,0.08);
+}
+
+.scene-moon-glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,210,180,0.12) 0%, transparent 70%);
+}
+
+/* Stars */
+.scene-stars {
+  position: absolute;
+  inset: 0;
+}
+
+.scene-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: starTwinkle ease-in-out infinite;
+}
+
+/* Clouds */
+.scene-cloud {
+  position: absolute;
+  left: 50%;
+  border-radius: 999px;
+  filter: blur(22px);
+  animation: cloudDrift linear infinite;
+  transform-origin: center center;
+}
+
+.scene-cloud-far {
+  height: 36px;
+  width: 420px;
+  margin-left: -210px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(200,180,240,0.13), transparent 70%);
+  animation-duration: 70s;
+}
+
+.scene-cloud-mid {
+  height: 55px;
+  width: 580px;
+  margin-left: -290px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(190,165,235,0.16), transparent 70%);
+  filter: blur(28px);
+  animation-duration: 52s;
+}
+
+/* Bats */
+.scene-bat {
+  position: absolute;
+  animation: batFly linear infinite;
+}
+
+.scene-bat svg {
+  animation: batWing 0.3s ease-in-out infinite;
+}
+
+/* Castle */
+.scene-castle-wrap {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  max-width: 95vw;
+  animation: castleFloat 6s ease-in-out infinite;
+  filter: drop-shadow(0 0 60px rgba(100,60,180,0.25)) drop-shadow(0 8px 40px rgba(0,0,0,0.9));
+}
+
+.scene-castle-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Torches on castle */
+.scene-torch {
+  position: absolute;
+  bottom: 36%;
+  width: 14px;
+  height: 14px;
+}
+
+.scene-torch-left  { left: 21%; }
+.scene-torch-right { right: 21%; }
+
+.scene-torch-flame {
+  width: 10px;
+  height: 16px;
+  margin: 0 auto;
+  background: radial-gradient(ellipse at 50% 80%, #ff6a00, #ff9500 40%, #ffdd00 70%, transparent 100%);
+  border-radius: 50% 50% 30% 30%;
+  animation: torchFlicker 1.8s ease-in-out infinite;
+  filter: blur(1px);
+  box-shadow: 0 0 10px 4px rgba(255,140,0,0.6), 0 0 20px 8px rgba(255,100,0,0.3);
+}
+
+/* Hills */
+.scene-hills-far {
+  position: absolute;
+  bottom: 18%;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: #0a0718;
+  clip-path: ellipse(65% 100% at 50% 100%);
+  opacity: 0.9;
+}
+
+.scene-hills-near {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 18%;
+  background: linear-gradient(180deg, #080510 0%, #050310 100%);
+  clip-path: polygon(0% 60%, 8% 40%, 18% 55%, 30% 30%, 42% 48%, 55% 25%, 65% 45%, 78% 20%, 88% 38%, 100% 15%, 100% 100%, 0% 100%);
+}
+
+/* Ground fog */
+.scene-fog {
+  position: absolute;
+  bottom: 14%;
+  left: -20%;
+  right: -20%;
+  height: 60px;
+  border-radius: 50%;
+  filter: blur(18px);
+  animation: fogDrift linear infinite;
+}
+
+.scene-fog-1 {
+  background: rgba(140, 110, 200, 0.12);
+  height: 50px;
+  bottom: 16%;
+  animation-duration: 28s;
+  animation-delay: 0s;
+}
+
+.scene-fog-2 {
+  background: rgba(100, 80, 160, 0.1);
+  height: 70px;
+  bottom: 12%;
+  animation-duration: 36s;
+  animation-delay: -12s;
+}
+
+.scene-fog-3 {
+  background: rgba(160, 130, 220, 0.08);
+  height: 40px;
+  bottom: 18%;
+  animation-duration: 22s;
+  animation-delay: -8s;
 }
