@@ -58,13 +58,10 @@ export const CastleBackground: React.FC = () => {
     scene.add(particles);
 
     let animationId: number;
-    let lastFrameTime = Date.now();
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
-      const now = Date.now();
       //const _deltaTime = Math.min((now - lastFrameTime) / 1000, 0.016);
-      lastFrameTime = now;
 
       const posAttr = particlesGeo.attributes.position as THREE.BufferAttribute;
       const posArray = posAttr.array as Float32Array;
