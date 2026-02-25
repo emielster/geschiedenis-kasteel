@@ -93,14 +93,14 @@ function useChannel(code: string | null, name: string | null, isHost = false) {
     const chan = supabase.channel(`quiz-${code}`, { 
       config: { 
         presence: { key: name },
-        broadcast: { ack: false } // ADD THIS - don't wait for acknowledgments
+        broadcast: { ack: false }
       } 
     });
 
     const updatePlayers = () => {
       try {
         const state = chan.presenceState() as Record<string, any[]>;
-        console.log('Raw presence state:', state); // ADD THIS
+        console.log('Raw presence state:', state);
         if (state && typeof state === 'object') {
           const list = Object.values(state).flat().map((p: any) => ({ name: p.name, score: p.score ?? 0, isHost: p.isHost }));
           setPlayers(list);
@@ -129,7 +129,7 @@ function useChannel(code: string | null, name: string | null, isHost = false) {
     chan.subscribe(async (status: string) => {
       console.log('Channel status:', status, 'for', name, 'isHost:', isHost);
       if (status === 'SUBSCRIBED') {
-        // Wait a tiny bit for the channel to stabilize
+        // Dit is een beetje dirty om een Promise hier te gebruiken
         await new Promise(resolve => setTimeout(resolve, 100));
         
         try { 
@@ -141,7 +141,6 @@ function useChannel(code: string | null, name: string | null, isHost = false) {
           setIsReady(true);
         } catch (e) {
           console.error('Track error details:', e);
-          // Still set ready - the channel is subscribed
           setIsReady(true);
         }
       } else if (status === 'CHANNEL_ERROR') {
@@ -261,7 +260,6 @@ function Lobby({ name, isHost, onExit }: { name: string; isHost: boolean; onExit
     }
   };
 
-  // Host listens for answers and tallies
   useEffect(() => {
     if (!channel) return;
     const sub = channel.on('broadcast', { event: 'player-answer' }, async (payload: any) => {
@@ -292,7 +290,6 @@ function Lobby({ name, isHost, onExit }: { name: string; isHost: boolean; onExit
           <button className="secondary" onClick={onExit}>Exit</button>
         </div>
 
-        {/* Connection Status with animated indicator */}
         <ConnectionStatus isReady={isReady} />
 
         {loadError && isHost && (
