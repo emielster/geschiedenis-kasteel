@@ -1,15 +1,12 @@
-// Loading spinner components to use in your app
-// Add these to a new file like LoadingSpinner.tsx
+
 
 import React from 'react';
-import './styles.css'; // Your updated CSS file
+import './styles.css'; 
 
-// Dual spinning circles loader
 export const SpinnerCircle: React.FC = () => (
   <div className="loader" />
 );
 
-// Animated dots
 export const LoadingDots: React.FC<{ text?: string }> = ({ text = 'Loading' }) => (
   <div style={{ textAlign: 'center' }}>
     <div className="loading-dots">
@@ -23,7 +20,6 @@ export const LoadingDots: React.FC<{ text?: string }> = ({ text = 'Loading' }) =
   </div>
 );
 
-// Skeleton loader for sections
 export const SkeletonLoader: React.FC = () => (
   <div style={{ width: '100%' }}>
     <div className="skeleton skeleton-text" />
@@ -32,7 +28,6 @@ export const SkeletonLoader: React.FC = () => (
   </div>
 );
 
-// Connected state indicator
 export const ConnectionStatus: React.FC<{ isReady: boolean }> = ({ isReady }) => (
   <div style={{ 
     fontSize: '0.85rem', 
@@ -55,7 +50,6 @@ export const ConnectionStatus: React.FC<{ isReady: boolean }> = ({ isReady }) =>
   </div>
 );
 
-// Loading overlay for game state
 export const LoadingOverlay: React.FC<{ message?: string }> = ({ message = 'Loading game...' }) => (
   <div style={{
     position: 'fixed',
