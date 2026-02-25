@@ -1,5 +1,3 @@
-import React, { useEffect, useRef } from 'react';
-
 // written by @emielster — full medieval scene background
 
 export const CastleBackground: React.FC = () => {

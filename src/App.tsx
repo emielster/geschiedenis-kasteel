@@ -234,6 +234,8 @@ function Leaderboard({ scores, players, isFinal, onContinue }: {
   const [showWinner, setShowWinner] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
+  console.log(phase);
+
   useEffect(() => {
     setPhase(0);
     setPillarsUp([]);
@@ -360,6 +362,8 @@ function Lobby({ name, isHost, onExit }: { name: string; isHost: boolean; onExit
     gameEnded, showLeaderboard, setShowLeaderboard,
     sendQuestion, sendScoreUpdate, sendAnswer, broadcastLeaderboard,
   } = useChannel('main', name, isHost);
+
+  console.log(sendScoreUpdate);
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionsLoading, setQuestionsLoading] = useState(false);
@@ -549,7 +553,8 @@ function QuestionBlock({ question, index, playerName, playerScore, lastPointsEar
   lastPointsEarned: number | null;
   onAnswer: (ans: number, timeLeft: number) => void;
 }) {
-  
+
+  console.log(playerName);
   const [revealPhase, setRevealPhase] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
