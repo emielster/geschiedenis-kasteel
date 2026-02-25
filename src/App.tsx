@@ -17,7 +17,6 @@ const supabase = g.__supabase__;
 type Question = { text: string; choices: string[]; correct: number };
 
 const MEDALS = ['🥇', '🥈', '🥉'];
-const RANK_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32'];
 const MAX_TIME = 15;
 
 export default function App() {
