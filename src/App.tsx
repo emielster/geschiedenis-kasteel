@@ -47,7 +47,7 @@ function HostLanding() {
             <button disabled={!name} onClick={() => setStarted(true)} className="join-button">Start Hosting</button>
             <button className="secondary" onClick={() => { window.location.pathname = '/'; }} style={{ width: '100%', marginTop: '10px' }}>Back</button>
           </div>
-          <footer className="footer">made by Emiel, Louis, Oscar en Fjorre</footer>
+          <footer className="footer">gemaakt door Emiel, Louis, Oscar en Fjorre voor PPT van geschiedenis</footer>
         </div>
       </div>
     );
@@ -64,13 +64,13 @@ function JoinLanding() {
         <div className="card join-card">
           <h1>Hertogen van Brabant</h1>
           <div className="join-section">
-            <h2 className="join-title">Join a Game</h2>
-            <p className="join-subtitle">Enter your name to join the quiz</p>
+            <h2 className="join-title">Join the game</h2>
+            <p className="join-subtitle">Enter your name to join the quiz of Hertogen van Brabant</p>
             <label>Your name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your display name" />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Voornaam" />
             <button disabled={!name} onClick={() => setJoined(true)} className="join-button">Join Game</button>
           </div>
-          <footer className="footer">made by Emiel, Louis, Oscar en Fjorre</footer>
+          <footer className="footer">gemaakt door Emiel, Louis, Oscar en Fjorre voor PPT van geschiedenis</footer>
         </div>
       </div>
     );
@@ -533,13 +533,13 @@ function Lobby({ name, isHost, onExit }: { name: string; isHost: boolean; onExit
               />
             ) : (
               <div style={{ textAlign: 'center', padding: '20px' }}>
-                <LoadingDots text="Waiting for host to start..." />
+                <LoadingDots text="Please wait..." />
               </div>
             )}
           </div>
         )}
 
-        <footer className="footer">made by Emiel, Louis, Oscar en Fjorre</footer>
+        <footer className="footer">gemaakt door Emiel, Louis, Oscar en Fjorre voor PPT van geschiedenis</footer>
       </div>
     </div>
   );
