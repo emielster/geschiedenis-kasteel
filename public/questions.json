@@ -6,7 +6,7 @@
   }
   ,{
     "text": "For what purpose was the castle originally built?",
-    "choices": ["Weaverschool", "Pumpers House", "Storage Facility", "Prison"],
+    "choices": ["Weaverschool", "Pumpers House", "Storage Facility", "Hunting Lodge"],
     "correct": 3
   },
   {
