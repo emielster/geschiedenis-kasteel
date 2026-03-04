@@ -20,17 +20,125 @@ const MEDALS = ['🥇', '🥈', '🥉'];
 const MAX_TIME = 15;
 
 export default function App() {
-  const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const isHost = typeof window !== 'undefined' && window.location.pathname.startsWith('/host');
+  if (isHost) {
+    return (
+      <>
+        <CastleBackground />
+        <div className="content-wrapper">
+          <HostLanding />
+        </div>
+      </>
+    );
+  }
+  return <MainSite />;
+}
+
+// ── Main site: nav bar + About / Game pages ───────────────────────────────────
+function MainSite() {
+  const [page, setPage] = useState<'about' | 'game'>('about');
+  const [player, setPlayer] = useState<string | null>(null);
+  const inGame = player !== null;
+  const onAbout = !inGame && page === 'about';
+
   return (
     <>
-      <CastleBackground />
-      <div className="content-wrapper">
-        {path.startsWith('/host') ? <HostLanding /> : <JoinLanding />}
+      {!onAbout && <CastleBackground />}
+      {!inGame && (
+        <nav className="site-nav">
+          <span className="site-nav-logo">🏰 Dukes of Brabant</span>
+          <div className="site-nav-links">
+            <button
+              className={`site-nav-link${page === 'about' ? ' active' : ''}`}
+              onClick={() => setPage('about')}
+            >
+              About
+            </button>
+            <button
+              className={`site-nav-link${page === 'game' ? ' active' : ''}`}
+              onClick={() => setPage('game')}
+            >
+              Game
+            </button>
+          </div>
+        </nav>
+      )}
+      <div className={`content-wrapper${inGame ? '' : (onAbout ? ' about-wrapper' : ' with-nav')}`}>
+        {inGame ? (
+          <Lobby name={player!} isHost={false} onExit={() => setPlayer(null)} />
+        ) : page === 'about' ? (
+          <AboutPage />
+        ) : (
+          <GamePage onJoin={setPlayer} />
+        )}
       </div>
     </>
   );
 }
 
+function AboutPage() {
+  const [sections, setSections] = useState<Array<{ title: string; content: string }> | null>(null);
+
+  useEffect(() => {
+    fetch('/about.json')
+      .then((r) => r.json())
+      .then((data) => setSections(data.sections))
+      .catch(() => console.error('Failed to load about.json'));
+  }, []);
+
+  return (
+    <div className="about-page-full">
+      <h1 className="about-page-title">About the Dukes of Brabant</h1>
+      <div className="about-page-content">
+        {sections ? (
+          sections.map((section, i) => (
+            <section key={i}>
+              <h2>{section.title}</h2>
+              <p>{section.content}</p>
+            </section>
+          ))
+        ) : (
+          <p style={{ color: '#ffffff', textAlign: 'center' }}>Loading...</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GamePage({ onJoin }: { onJoin: (name: string) => void }) {
+  const [name, setName] = useState('');
+  return (
+    <div className="page-card">
+      <div className="page-hero">
+        <span className="page-hero-icon">⚔️</span>
+        <h1>Join the Game</h1>
+        <p className="page-hero-sub">Enter your name and test your knowledge of the Dukes of Brabant</p>
+      </div>
+      <div className="join-section">
+        <label>Your Name</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your name"
+          autoFocus
+          onKeyDown={(e) => { if (e.key === 'Enter' && name.trim()) onJoin(name.trim()); }}
+        />
+        <button
+          disabled={!name.trim()}
+          onClick={() => onJoin(name.trim())}
+          className="join-button"
+        >
+          Join Game →
+        </button>
+      </div>
+      <footer className="footer">
+        Created by Emiel, Louis, Oscar and Fjorre
+      </footer>
+    </div>
+  );
+}
+
+// ── Host landing (only accessible at /host) ───────────────────────────────────
 function HostLanding() {
   const [name, setName] = useState('');
   const [started, setStarted] = useState(false);
@@ -38,44 +146,21 @@ function HostLanding() {
     return (
       <div className="app-root">
         <div className="card join-card">
-          <h1>Hertogen van Brabant</h1>
+          <h1>Dukes of Brabant</h1>
           <div className="join-section">
             <h2 className="join-title">Host a Game</h2>
             <p className="join-subtitle">Create a quiz and manage players</p>
-            <label>Your name</label>
+            <label>Your Name</label>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your display name" />
             <button disabled={!name} onClick={() => setStarted(true)} className="join-button">Start Hosting</button>
             <button className="secondary" onClick={() => { window.location.pathname = '/'; }} style={{ width: '100%', marginTop: '10px' }}>Back</button>
           </div>
-          <footer className="footer">gemaakt door Emiel, Louis, Oscar en Fjorre voor PPT van geschiedenis</footer>
+          <footer className="footer">Created by Emiel, Louis, Oscar and Fjorre</footer>
         </div>
       </div>
     );
   }
   return <Lobby name={name} isHost={true} onExit={() => { window.location.pathname = '/'; }} />;
-}
-
-function JoinLanding() {
-  const [name, setName] = useState('');
-  const [joined, setJoined] = useState(false);
-  if (!joined) {
-    return (
-      <div className="app-root">
-        <div className="card join-card">
-          <h1>Hertogen van Brabant</h1>
-          <div className="join-section">
-            <h2 className="join-title">Join the game</h2>
-            <p className="join-subtitle">Enter your name to join the quiz of Hertogen van Brabant</p>
-            <label>Your name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Voornaam" />
-            <button disabled={!name} onClick={() => setJoined(true)} className="join-button">Join Game</button>
-          </div>
-          <footer className="footer">gemaakt door Emiel, Louis, Oscar en Fjorre voor PPT van geschiedenis</footer>
-        </div>
-      </div>
-    );
-  }
-  return <Lobby name={name} isHost={false} onExit={() => { setJoined(false); setName(''); }} />;
 }
 
 function useChannel(code: string, name: string, isHost: boolean) {
